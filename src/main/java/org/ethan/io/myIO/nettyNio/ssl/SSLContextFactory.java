@@ -17,16 +17,6 @@ public class SSLContextFactory {
 	private static SSLContext CLIENT_CONTEXT;
 	
 	private static final String PROTOCOL = "TLS";
-    private static String SERVER_KEY_STORE = "E:\\test-eclipse-workspace\\myIO\\src\\main\\resources\\cer\\server\\sslServer.keyStore";
-    private static String SERVER_TRUST_KEY_STORE = "E:\\test-eclipse-workspace\\myIO\\src\\main\\resources\\cer\\client\\sslClient.keyStore";
-    private static String SERVER_KEY_STORE_PASSWORD = "123456";
-    private static String SERVER_TRUST_KEY_STORE_PASSWORD = "123456";
-    
-    
-    private static String CLIENT_KEY_STORE = "E:\\test-eclipse-workspace\\myIO\\src\\main\\resources\\cer\\client\\sslClient.keyStore";
-    private static String CLIENT_TRUST_KEY_STORE = "E:\\test-eclipse-workspace\\myIO\\src\\main\\resources\\cer\\server\\sslServer.keyStore";
-    private static String CLIENT_KEY_STORE_PASSWORD = "123456";
-    private static String CLIENT_TRUST_KEY_STORE_PASSWORD = "123456";
     
     private static void initServerContext() {
     	 String algorithm = SystemPropertyUtil.get("ssl.KeyManagerFactory.algorithm");
