@@ -11,6 +11,14 @@ public class SocketRequestContext {
 	private SocketRequest request;
 	
 	private SocketResponse response;
+	
+
+	public SocketRequestContext(ChannelHandlerContext channelContext, SocketRequest request, SocketResponse response) {
+		super();
+		this.channelContext = channelContext;
+		this.request = request;
+		this.response = response;
+	}
 
 	public SocketRequest getRequest() {
 		return request;

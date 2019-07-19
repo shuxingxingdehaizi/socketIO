@@ -8,6 +8,9 @@ import javax.net.ssl.SSLEngine;
 import org.ethan.io.myIO.nettyNio.handler.MyServerHandler;
 import org.ethan.io.myIO.nettyNio.ssl.SSLContextFactory;
 import org.ethan.io.myIO.util.PropertiesUtil;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -25,7 +28,8 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslHandler;
 
-public class NettyNioServer {
+@Component("nettyNioServer")
+public class NettyNioServer implements InitializingBean,DisposableBean{
 	private static final int PORT = Integer.valueOf(PropertiesUtil.getServerConfig("port"));
 	
 	private boolean sslEnable = Boolean.valueOf(PropertiesUtil.getServerConfig("isSSLEnable"));
@@ -70,9 +74,9 @@ public class NettyNioServer {
 			
 			ChannelFuture cf = sb.bind().sync();// 服务器异步创建绑定
 			if(sslEnable) {
-				System.out.println("Socket server start soccess and Listening on port :"+PORT+" with SSL enable");
+				System.out.println("Socket server start success and Listening on port :"+PORT+" with SSL enable");
 			}else {
-				System.out.println("Socket server start soccess and Listening on port :"+PORT);
+				System.out.println("Socket server start success and Listening on port :"+PORT);
 			}
 			
 			cf.channel().closeFuture().sync(); // 关闭服务器通道
@@ -86,5 +90,17 @@ public class NettyNioServer {
 	
 	public static void main(String[] args) throws InterruptedException {
 		new NettyNioServer().start();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {//Spring加载完后启动服务器
+		// TODO Auto-generated method stub
+		new NettyNioServer().start();
+	}
+
+	@Override
+	public void destroy() throws Exception {//Spring容器销毁时，销毁服务器
+		// TODO Auto-generated method stub
+		
 	}
 }

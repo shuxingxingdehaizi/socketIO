@@ -9,6 +9,14 @@ public class SocketResponse {
 	
 	private String responseCharectorEncoding;
 	
+	
+	
+	public SocketResponse(Channel channel, String responseCharectorEncoding) {
+		super();
+		this.channel = channel;
+		this.responseCharectorEncoding = responseCharectorEncoding;
+	}
+
 	public void response(String msg){
 		try {
 			channel.writeAndFlush(msg.getBytes(responseCharectorEncoding));
