@@ -1,0 +1,3 @@
+NettySocket服务器
+支持SSL
+支持灵活的自定义协议解析器以及请求路由，同时支持过滤器机制，开发者可以像开发servlet和SpringController一样，方便的开发socket服务端代码
