@@ -144,6 +144,13 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
 					return o1.getOrder() - o2.getOrder();
 				}
 			});
+        	System.out.println("==============Filter chain begin================");
+        	for(SocketFilter f : filters) {
+        		System.out.println(f.getOrder()+":"+f.getClass().getName());
+        	}
+        	System.out.println("==============Filter chain end================");
+        }else {
+        	System.out.println("No filter found");
         }
 	}
 	
@@ -159,7 +166,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
 				}
 			}
 		}
-		System.out.println("Use "+requestDecorder.getClass().getName()+" as requestDecorder");
+		System.out.println("Use ["+requestDecorder.getClass().getName()+"] as requestDecorder");
 		
 		Map<String,ResponseEncorder>responseEncorders = springContext.getBeansOfType(ResponseEncorder.class);
 		if(responseEncorders.size() == 1) {//未配置编码器，使用默认编码器
@@ -172,7 +179,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
 				}
 			}
 		}
-		System.out.println("Use "+responseEncorder.getClass().getName()+" as responseEncorder");
+		System.out.println("Use ["+responseEncorder.getClass().getName()+"] as responseEncorder");
 	}
 	
 	private void initRouteIndicator() {
@@ -183,11 +190,12 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
 			for(Map.Entry<String, RouteIndicator>ent : routeIndicators.entrySet()) {
 				if(!ent.getKey().equals("defaultIndicator")) {
 					routeIndicator = ent.getValue();
-					System.out.println("Set routeIndicator as "+ent.getKey());
+					
 					break;
 				}
 			}
 		}
+		System.out.println("Use ["+routeIndicator.getClass().getName()+"] as routeIndicator");
 	}
 
 	@Override
