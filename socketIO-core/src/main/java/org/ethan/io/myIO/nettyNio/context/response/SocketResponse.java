@@ -9,12 +9,19 @@ public class SocketResponse {
 	
 	private String responseCharectorEncoding;
 	
-	
+	private Object responseMsg;
 	
 	public SocketResponse(Channel channel, String responseCharectorEncoding) {
 		super();
 		this.channel = channel;
 		this.responseCharectorEncoding = responseCharectorEncoding;
+	}
+	
+	public SocketResponse(Channel channel, String responseCharectorEncoding,Object responseMsg) {
+		super();
+		this.channel = channel;
+		this.responseCharectorEncoding = responseCharectorEncoding;
+		this.responseMsg = responseMsg;
 	}
 
 	public void response(String msg){
@@ -28,5 +35,13 @@ public class SocketResponse {
 	
 	public void response(byte[] msg){
 		channel.writeAndFlush(msg);
+	}
+	
+	public Object getResponseMsg() {
+		return this.responseMsg;
+	}
+	
+	public void setResponseMsg(Object responseMsg) {
+		this.responseMsg = responseMsg;
 	}
 }

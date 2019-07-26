@@ -70,18 +70,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		// TODO Auto-generated method stub
 		//1.读取请求,解码
-		Object request = "";
-		if(this.requestDecorder == null) {//如未配置解码器，使用默认解码方式
-			
-			if(msg instanceof String) {
-				request = (String)msg;
-			}else if(msg instanceof ByteBuf){
-  				ByteBuf buf = (ByteBuf) msg;
-				request = getMessage(buf);
-			}
-		}else {
-			request = this.requestDecorder.decord(msg); 
-		}
+		Object request = this.requestDecorder.decord(msg);
 		
 		SocketRequest socketRequest = new SocketRequest(msg,request);
 		
@@ -106,41 +95,21 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
 		Object response = cm.getMethod().invoke(cm.getControllerBean(), socketRequest.getRequestMessage());
 		
 		//5.后置过滤器
+		socketResponse.setResponseMsg(response);
+		
 		SocketRequestContext responseContext = new SocketRequestContext(ctx, socketRequest, socketResponse);
 		if(this.filters != null && !this.filters.isEmpty()) {
         	SocketFilterChain chain = new SocketFilterChain(this.filters);
             chain.doAfterFilter(chain, responseContext);
         }
 		
-		byte[] responseBytes = null;
 		//6.响应编码
-		if(this.responseEncorder == null){//使用默认编码方式
-			
-		}else {
-			responseBytes = this.responseEncorder.encord(response);
-		}
-		
-		//5.业务逻辑处理...
-        System.out.println(Thread.currentThread().getName()+"-----Received data from client:" + request);
+		byte[] responseBytes = this.responseEncorder.encord(response);
         
         //3.生成响应，发送至客户端
-        if(responseBytes == null) {
-        	responseBytes = ("Hello :"+ request).getBytes();
-        }
         ctx.channel().writeAndFlush(responseBytes).sync();
        
 	}
-	
-	private String getMessage(ByteBuf buf) {
-        byte[] con = new byte[buf.readableBytes()];
-        buf.readBytes(con);
-        try {
-            return new String(con, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
@@ -178,19 +147,32 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
         }
 	}
 	
-	private void initDisister() {
-		try {
-			requestDecorder = springContext.getBean(RequestDecorder.class);
-		} catch (NoSuchBeanDefinitionException e) {
-			// TODO: handle exception
-			System.out.println("No requestDecorder found,use default!");
+	private void initDigister() {
+		Map<String,RequestDecorder>requestDecorders = springContext.getBeansOfType(RequestDecorder.class);
+		if(requestDecorders.size() == 1) {
+			requestDecorder = (RequestDecorder) requestDecorders.values().toArray()[0];//未配置解码器，使用默认解码器
+		}else {
+			for(Map.Entry<String, RequestDecorder>ent : requestDecorders.entrySet()) {
+				if(!ent.getKey().equals("defaultRequestDecorder")) {
+					requestDecorder = ent.getValue();
+					break;
+				}
+			}
 		}
-		try {
-			responseEncorder = springContext.getBean(ResponseEncorder.class);
-		}catch (NoSuchBeanDefinitionException e) {
-			System.out.println("No responseEncorder found,use default!");
-		}
+		System.out.println("Use "+requestDecorder.getClass().getName()+" as requestDecorder");
 		
+		Map<String,ResponseEncorder>responseEncorders = springContext.getBeansOfType(ResponseEncorder.class);
+		if(responseEncorders.size() == 1) {//未配置编码器，使用默认编码器
+			responseEncorder = (ResponseEncorder) responseEncorders.values().toArray()[0];
+		}else {
+			for(Map.Entry<String, ResponseEncorder>ent : responseEncorders.entrySet()) {
+				if(!ent.getKey().equals("defaultResponseEncorder")) {
+					responseEncorder = ent.getValue();
+					break;
+				}
+			}
+		}
+		System.out.println("Use "+responseEncorder.getClass().getName()+" as responseEncorder");
 	}
 	
 	private void initRouteIndicator() {
@@ -215,7 +197,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter implements Ini
 		
 		initFilterChain();
 		
-		initDisister();
+		initDigister();
 		
 		initRouteIndicator();
 	}

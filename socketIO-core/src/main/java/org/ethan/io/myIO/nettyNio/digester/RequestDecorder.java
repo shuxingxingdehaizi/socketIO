@@ -1,5 +1,7 @@
 package org.ethan.io.myIO.nettyNio.digester;
 
+import org.ethan.io.myIO.nettyNio.exception.RequestDecordException;
+
 public interface RequestDecorder<T> {
 	/**
 	 * 将请求报文格式化为对象
@@ -7,6 +9,6 @@ public interface RequestDecorder<T> {
 	 * @param request
 	 * @return
 	 */
-	public T decord(Object request);
+	public T decord(Object request)throws RequestDecordException;
 	
 }

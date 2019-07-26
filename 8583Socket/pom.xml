@@ -8,10 +8,10 @@
 		<version>2.1.6.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ethan.io.socketIO</groupId>
-	<artifactId>socketIODemo</artifactId>
+	<groupId>com.ethan.io</groupId>
+	<artifactId>8583Socket</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>socketIODemo</name>
+	<name>8583Socket</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -35,6 +35,13 @@
 			<artifactId>socketIO-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.ethan</groupId>
+			<artifactId>my8583</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
